@@ -9,6 +9,14 @@ public class Model {
 	public Model() {
 		manager = new Manager();
 	}
+
+	public Manager getManager() {
+		return manager;
+	}
+
+	public void setManager(Manager manager) {
+		this.manager = manager;
+	}
 	
 
 }

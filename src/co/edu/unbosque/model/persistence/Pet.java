@@ -7,20 +7,22 @@ public class Pet implements Serializable {
 	private long microchip;
 	private String species;
 	private String sex;
+	private String size;
 	private boolean potentDangerous;
 	private String neighborhood;
 	
-	public Pet(String id, long microchip, String species, String sex, boolean potenrDangerous, String neighborhood) {
+	public Pet(String id, long microchip, String species, String sex,String size, boolean potenrDangerous, String neighborhood) {
 		this.id =id;
 		this.microchip =microchip;
 		this.species = species;
 		this.sex=sex;
+		this.size=size;
 		this.potentDangerous=potenrDangerous;
 		this.neighborhood=neighborhood;
 	}
 	
 	public String toString() {
-		return "Id: "+this.id+"\nMicrochip: "+this.microchip+"\nSpecies: "+this.species+"\nSex: "+this.sex+"\nPotential Dangerous: "+this.potentDangerous+"\nNeighborhood: "+this.neighborhood;
+		return "Id: "+this.id+"\nMicrochip: "+this.microchip+"\nSpecies: "+this.species+"\nSex: "+this.sex+"\nSize: "+this.size+"\nPotential Dangerous: "+this.potentDangerous+"\nNeighborhood: "+this.neighborhood+"\n==============================================================================================\n";
 	}
 
 	public String getId() {
@@ -69,6 +71,14 @@ public class Pet implements Serializable {
 
 	public void setNeighborhood(String neighborhood) {
 		this.neighborhood = neighborhood;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
 	}
 	
 	
