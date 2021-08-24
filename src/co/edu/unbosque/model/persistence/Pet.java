@@ -18,7 +18,7 @@ public class Pet implements Serializable {
 		this.sex=sex;
 		this.size=size;
 		this.potentDangerous=potenrDangerous;
-		this.neighborhood=neighborhood;
+		this.neighborhood=neighborhood;  
 	}
 	
 	public String toString() {

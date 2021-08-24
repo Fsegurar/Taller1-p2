@@ -6,3 +6,4 @@ public class EmptyAttributeException extends Exception {
 		super("neighborhood no asignado");
 	}
 }
+  

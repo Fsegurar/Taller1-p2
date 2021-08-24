@@ -22,7 +22,7 @@ public class Manager {
 		pet = new ArrayList<>();
 		dato = new ArrayList<>();
 		omit = new ArrayList<>();
-		
+		 
 	}
 	
 	/*Por medio de una libreria externa se lee el csv separandolo y guardando cada atributo en el objeto de tipo pet*/
@@ -61,7 +61,7 @@ public class Manager {
 		}catch (CsvValidationException e) {
 				
 		}
-		return "Carga exitosa";
+		return "Carga exitosa"; 
 		}
 	
 	/* crea un id especifico para cada registro dependiendo de la informacion suministrada*/
@@ -90,12 +90,12 @@ public class Manager {
 				j=2;
 			}
 				pet.get(i).setId(id);
-				
+					
 			}
 		
 		return "Asignacion de id exitosa";
 	}
-
+	
 	public ArrayList<Pet> getPet() {
 		return pet;
 	}
