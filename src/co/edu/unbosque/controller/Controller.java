@@ -126,6 +126,7 @@ public class Controller implements ActionListener {
 					break;
 				case 7: 
 					view.mostrarInfo("Hasta Pronto", "info");
+					
 					break;
 				default:
 					JOptionPane.showMessageDialog(null, "Opción inválida");
