@@ -26,7 +26,7 @@ public class Manager {
 	}
 	
 	/*Por medio de una libreria externa se lee el csv separandolo y guardando cada atributo en el objeto de tipo pet*/
-	public String uploadData(String file){
+	public boolean uploadData(String file){
 		boolean dangerous = false;
 		try {
 			csvFile = new FileReader(file);
@@ -57,11 +57,11 @@ public class Manager {
 			csvReader.close();
 			
 		} catch(IOException e) {
-			return "Carga no exitosa";
+			return false;
 		}catch (CsvValidationException e) {
 				
 		}
-		return "Carga exitosa"; 
+		return true; 
 		}
 	
 	/* crea un id especifico para cada registro dependiendo de la informacion suministrada*/
@@ -69,6 +69,7 @@ public class Manager {
 		String last="";
 		
 		for(int i = 0;i<pet.size();i++) {
+			boolean error = false ;
 			int j =2;
 			String digitos = pet.get(i).getMicrochip()+"";
 			if(pet.get(i).isPotentDangerous()==true) {
@@ -80,21 +81,140 @@ public class Manager {
 			try {
 				for(int k = 0;k<pet.size();k++) {
 					if(pet.get(k).getId().equals(id)) {
+						error = true;
 						throw new IdentifierExistsException();
-						
 					}
 				}
 			}catch (IdentifierExistsException e) {
-				j++;
-				id= digitos.substring(digitos.length()-j, digitos.length())+"-"+pet.get(i).getSpecies().substring(0, 1)+pet.get(i).getSex().substring(0, 1)+pet.get(i).getSize().substring(0, 1)+last;
-				j=2;
+				do {
+					int contador = 0;
+					j++;
+					id= digitos.substring(digitos.length()-j, digitos.length())+"-"+pet.get(i).getSpecies().substring(0, 1)+pet.get(i).getSex().substring(0, 1)+pet.get(i).getSize().substring(0, 1)+last;
+					for(int f = 0;f<i;f++) {
+						if(pet.get(f).getId().equals(id)) {
+							contador = 1;
+							f=i;
+						}else {
+							contador=0;
+						}
+					}
+					if(contador!=1) {
+					 error = false;	
+					 j=2;
+					}
+				}while(error);
+				
 			}
 				pet.get(i).setId(id);
-					
-			}
+		}
 		
 		return "Asignacion de id exitosa";
 	}
+	
+	public String findByMicrochip(long number) {
+		int j=0;
+		boolean flag = false;
+		for(int i=0;i<pet.size();i++) {	
+			if(pet.get(i).getMicrochip()==number) {
+				j=i;
+				i=pet.size();
+				flag=true;
+			}
+		}
+		if(flag) {
+			return pet.get(j).toString();
+		}else {
+			return "Microchip no encontrado";
+		}
+		
+	}
+	
+	public String countBySpecies() {
+		long dog=0, cat=0, nn=0;
+		for(int i=0;i<pet.size();i++) {
+			if(pet.get(i).getSpecies().equals("CANINO")) {
+				dog++;
+			} else if(pet.get(i).getSpecies().equals("FELINO")) {
+				cat++;
+			}else {
+				nn++;
+			}
+		}
+		return "Caninos : "+dog+".\nFelinos : "+cat+".\nNo Identificado : "+nn+".";
+	}
+	
+	public String countByNeighborhood() {
+		long anarino=0, bunidos=0, bosa=0, cbolivar=0, chapinero=0, engativa=0, fontibon=0, kenedy=0, candelaria=0, martires=0, aledaños=0, aranda=0, uribe=0, cristobal=0, santafe=0, nn=0, suba=0, sumapaz=0, teusaquillo=0, tunjuelito=0, usaquen=0, usme=0;
+		for(int i=0;i<pet.size();i++) {
+			if(pet.get(i).getNeighborhood().equals("A. NARINO")) {
+				anarino++;
+			}else if(pet.get(i).getNeighborhood().equals("B. UNIDOS")) {
+				bunidos++;
+			}else if(pet.get(i).getNeighborhood().equals("BOSA")) {
+				bosa++;
+			}else if(pet.get(i).getNeighborhood().equals("C. BOLIVAR")) {
+				cbolivar++;
+			}else if(pet.get(i).getNeighborhood().equals("CHAPINERO")) {
+				chapinero++;
+			}else if(pet.get(i).getNeighborhood().equals("ENGATIVA")) {
+				engativa++;
+			}else if(pet.get(i).getNeighborhood().equals("FONTIBON")) {
+				fontibon++;
+			}else if(pet.get(i).getNeighborhood().equals("KENNEDY")) {
+				kenedy++;
+			}else if(pet.get(i).getNeighborhood().equals("LA CANDELARIA")) {
+				candelaria++;
+			}else if(pet.get(i).getNeighborhood().equals("LOS MARTIRES")) {
+				martires++;
+			}else if(pet.get(i).getNeighborhood().equals("MUNICIPIOS ALEDAÑOS BOGOTA D.C.")) {
+				aledaños++;
+			}else if(pet.get(i).getNeighborhood().equals("P. ARANDA")) {
+				aranda++;
+			}else if(pet.get(i).getNeighborhood().equals("R. URIBE")) {
+				uribe++;
+			}else if(pet.get(i).getNeighborhood().equals("SAN CRISTOBAL")) {
+				cristobal++;
+			}else if(pet.get(i).getNeighborhood().equals("SANTA FE")) {
+				santafe++;
+			}else if(pet.get(i).getNeighborhood().equals("SIN IDENTIFICAR")) {
+				nn++;
+			}else if(pet.get(i).getNeighborhood().equals("SUBA")) {
+				suba++;
+			}else if(pet.get(i).getNeighborhood().equals("SUMAPAZ")) {
+				sumapaz++;
+			}else if(pet.get(i).getNeighborhood().equals("TEUSAQUILLO")) {
+				teusaquillo++;
+			}else if(pet.get(i).getNeighborhood().equals("TUNJUELITO")) {
+				tunjuelito++;
+			}else if(pet.get(i).getNeighborhood().equals("USAQUEN")) {
+				usaquen++;
+			}else if(pet.get(i).getNeighborhood().equals("USME")) {
+				usme++;
+			}
+		}
+		return "A. NARINO : "+anarino
+				+"\nB. UNIDOS : "+bunidos
+				+"\nBOSA : "+bosa
+				+"\nC. BOLIVAR : "+cbolivar
+				+"\nCHAPINERO : "+chapinero
+				+"\nENGATIVA : "+engativa
+				+"\nFONTIBON : "+fontibon
+				+"\nKENNEDY : "+kenedy
+				+"\nLA CANDELARIA : "+candelaria
+				+"\nLOS MARTIRES : "+martires
+				+"\nP. ARANDA : "+aranda
+				+"\nR. URIBE : "+uribe
+				+"\nSAN CRISTOBAL : "+cristobal
+				+"\nSANTA FE : "+santafe
+				+"\nSUBA : "+suba
+				+"\nSUMAPAZ : "+sumapaz
+				+"\nTEUSAQUILLO : "+teusaquillo
+				+"\nTUNJUELITO : "+tunjuelito
+				+"\nUSAQUEN : "+usaquen
+				+"\nUSME : "+usme
+				+"\nMUNICIPIOS ALEDAÑOS BOGOTA D.C. : "+aledaños
+				+"\nSIN IDENTIFICAR : "+nn;
+	}	
 	
 	public ArrayList<Pet> getPet() {
 		return pet;
