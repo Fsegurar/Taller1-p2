@@ -11,6 +11,13 @@ import co.edu.unbosque.controller.Controller;
 
 public class View extends JFrame{
 	private panel p;
+	private VentanaCustomSearch custom;
+	
+	public View() {
+		
+		custom = new VentanaCustomSearch();	
+	}
+	 
 	
 	public View(Controller control) {
 		setSize(700,500);
@@ -43,14 +50,14 @@ public class View extends JFrame{
 	
 	
 	public void escribirDato(String string) {
-		JOptionPane.showMessageDialog(null, string, "Ciudadano de 4patas", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, string, "Ciudadano de 4 patas", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	
 	
 	public int yesOrno(String tex) {
 		int dato = 0; 
-		dato= JOptionPane.showConfirmDialog(null, tex, "Ciudadano de 4patas", JOptionPane.YES_NO_OPTION);;
+		dato= JOptionPane.showConfirmDialog(null, tex, "Ciudadano de 4 patas", JOptionPane.YES_NO_OPTION);;
 		return dato;
 	}
 	
@@ -60,10 +67,10 @@ public class View extends JFrame{
 		do {
 			try {
 				numero = 0;
-				numero = Integer.parseInt(JOptionPane.showInputDialog(null,mensaje , "Ciudadano de 4patas", JOptionPane.QUESTION_MESSAGE));
+				numero = Integer.parseInt(JOptionPane.showInputDialog(null,mensaje , "Ciudadano de 4 patas", JOptionPane.QUESTION_MESSAGE));
 				error = false;
 			} catch ( NumberFormatException e) {
-				mostrarInfo("Digite numero valido", "error");
+				mostrarInfo("Digite número válido", "error");
 				error = true;
 			} 
 		}while (error);	
@@ -102,6 +109,14 @@ public class View extends JFrame{
 
 	public void setP(panel p) {
 		this.p = p;
+	}
+
+	public VentanaCustomSearch getCustom() {
+		return custom;
+	}
+
+	public void setCustom(VentanaCustomSearch custom) {
+		this.custom = custom;
 	}
 	
 	

@@ -2,10 +2,12 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
 import co.edu.unbosque.model.Model;
+import co.edu.unbosque.view.VentanaCustomSearch;
 import co.edu.unbosque.view.View;
 
 public class Controller implements ActionListener {
@@ -13,13 +15,20 @@ public class Controller implements ActionListener {
 	private Model model;
 	private View view;
 	Byte opcion = 0;
+	private VentanaCustomSearch custom;
+	
 	public Controller() {
 		model = new Model();
-		view = new View(this);
+		view = new View(this);    
+		custom = new VentanaCustomSearch();	
+		asignarOyentes();
 		funcionar();
 	}
 	
-	@SuppressWarnings("unlikely-arg-type")
+	private void asignarOyentes() {
+		custom.getpCustom().getBoton_search().addActionListener(this);
+	}
+
 	public void funcionar() {
 		view.escribirDato("Bienvenido al programa ciudadano de 4 patas");
 		view.escribirDato("Por favor cargue el archivo CSV");
@@ -38,6 +47,7 @@ public class Controller implements ActionListener {
 			
 		}else {
 			int opcion;
+			
 			do {
 				opcion=view.pedirDatoEnteroInt(
 						"¿QUÉ DESEA HACER?\n"+
@@ -46,7 +56,7 @@ public class Controller implements ActionListener {
 						"3.Buscar un animal por su microchip\n"+
 						"4.Contar la cantidad de animales por especie\n"+
 						"5.Contar la cantidad de animales por localidad\n"+
-						"6.Busqueda personalizada\n"+
+						"6.Búsqueda personalizada\n"+
 						"7.Salir\n"+
 						"ELIJA SU POCIÓN");	
 				switch(opcion) {
@@ -70,7 +80,8 @@ public class Controller implements ActionListener {
 					view.escribirDato(model.getManager().countByNeighborhood());
 					break;
 				case 6:
-					
+					custom.setVisible(true);	
+					opcion=7;
 					break;
 				case 7: 
 					view.mostrarInfo("Hasta Pronto", "info");
@@ -86,7 +97,6 @@ public class Controller implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals("OK")) {
 			view.setVisible(false);
 			view.getP().getBoton().setActionCommand("OK1");
@@ -99,7 +109,7 @@ public class Controller implements ActionListener {
 						"3.Buscar un animal por su microchip\n"+
 						"4.Contar la cantidad de animales por especie\n"+
 						"5.Contar la cantidad de animales por localidad\n"+
-						"6.Busqueda personalizada\n"+
+						"6.Búsqueda personalizada\n"+
 						"7.Salir\n"+
 						"ELIJA SU POCIÓN");	
 				switch(opcion) {
@@ -123,10 +133,11 @@ public class Controller implements ActionListener {
 					view.escribirDato(model.getManager().countByNeighborhood());
 					break;
 				case 6:
+					custom.setVisible(true);					
+					opcion=7;
 					break;
 				case 7: 
-					view.mostrarInfo("Hasta Pronto", "info");
-					
+					view.mostrarInfo("Hasta Pronto", "info");				
 					break;
 				default:
 					JOptionPane.showMessageDialog(null, "Opción inválida");
@@ -141,11 +152,11 @@ public class Controller implements ActionListener {
 				opcion=view.pedirDatoEnteroInt(
 						"¿QUÉ DESEA HACER?\n"+
 						"1.Asignar Id a todas las mascotas\n"+
-						"2.Ver todos los registros\n"+
+						"2.Ver todos los registros\n"+ 
 						"3.Buscar un animal por su microchip\n"+
 						"4.Contar la cantidad de animales por especie\n"+
 						"5.Contar la cantidad de animales por localidad\n"+
-						"6.Busqueda personalizada\n"+
+						"6.Búsqueda personalizada\n"+
 						"7.Salir\n"+
 						"ELIJA SU POCIÓN");	
 				switch(opcion) {
@@ -169,6 +180,8 @@ public class Controller implements ActionListener {
 					view.escribirDato(model.getManager().countByNeighborhood());
 					break;
 				case 6:
+					custom.setVisible(true);				
+					opcion=7;
 					break;
 				case 7: 
 					view.mostrarInfo("Hasta Pronto", "info");
@@ -178,9 +191,33 @@ public class Controller implements ActionListener {
 					break;
 				}
 			}while (opcion!=7);
+			
+		}else if(e.getActionCommand().equals("BUSCAR")) {			
+			String n=custom.getpCustom().getTxtNumero().getText();		
+			String p= custom.getpCustom().getTxtPosicion().getText();		
+			String s= custom.getpCustom().getTxtEspecie().getText();
+			String se= custom.getpCustom().getTxtSex().getText();
+			String si= custom.getpCustom().getTxtSize().getText();
+			String da= custom.getpCustom().getTxtDangerous().getText();
+			String ne= custom.getpCustom().getTxtNeighborhood().getText();
+			
+			view.getP().getArea().setText(model.getManager().findByMultipleFields(n,p,s,se,si,da,ne));
+			view.bigData();
+			custom.setVisible(false);	
+			model.getManager().getBusqueda().clear();		
 		}
-	}
+	}	
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

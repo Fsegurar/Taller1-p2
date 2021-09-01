@@ -1,8 +1,11 @@
 package co.edu.unbosque.model.persistence;
 
+import java.awt.event.ActionEvent;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
@@ -10,23 +13,30 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 
+import co.edu.unbosque.view.VentanaCustomSearch;
+
 public class Manager {
-	
+
 	private ArrayList<Pet> pet;
-	private ArrayList<Pet> dato;
 	private ArrayList<Pet> omit;
+	private ArrayList<Pet> busqueda;
+	private ArrayList<Pet> resul;
 	private CSVReader csvReader;
 	private FileReader csvFile;
-	
+
 	public Manager() {
+		resul = new ArrayList<>();
 		pet = new ArrayList<>();
-		dato = new ArrayList<>();
 		omit = new ArrayList<>();
-		 
+		busqueda = new ArrayList<>();
+
 	}
-	
-	/*Por medio de una libreria externa se lee el csv separandolo y guardando cada atributo en el objeto de tipo pet*/
-	public boolean uploadData(String file){
+
+	/*
+	 * Por medio de una libreria externa se lee el csv separandolo y guardando cada
+	 * atributo en el objeto de tipo pet
+	 */
+	public boolean uploadData(String file) {
 		boolean dangerous = false;
 		try {
 			csvFile = new FileReader(file);
@@ -36,186 +46,440 @@ public class Manager {
 			csvReader.readNext();
 			while ((fila = csvReader.readNext()) != null) {
 				try {
-					if(fila[4].equals("NO")) {
+					if (fila[4].equals("NO")) {
 						dangerous = false;
-					} else if(fila[4].equals("SI")) {
+					} else if (fila[4].equals("SI")) {
 						dangerous = true;
 					}
-					
+
 					if (fila[5].equals(null)) {
 						throw new EmptyAttributeException();
 					}
-					pet.add(new Pet("NO ASIGNADO", Long.parseLong(fila[0]), fila[1], fila[2], fila[3], dangerous, fila[5]));
-				
-				}catch (EmptyAttributeException e) {
-					omit.add(new Pet("NO ASIGNADO", Long.parseLong(fila[0]), fila[1], fila[2],fila[3], dangerous, "No Asignado"));
-				}catch (NumberFormatException e) {
-					omit.add(new Pet("NO ASIGNADO", 0000000000, fila[1], fila[2],fila[3], dangerous, fila[5]));
+					pet.add(new Pet("NO ASIGNADO", Long.parseLong(fila[0]), fila[1], fila[2], fila[3], dangerous,
+							fila[5]));
+
+				} catch (EmptyAttributeException e) {
+					omit.add(new Pet("NO ASIGNADO", Long.parseLong(fila[0]), fila[1], fila[2], fila[3], dangerous,
+							"No Asignado"));
+				} catch (NumberFormatException e) {
+					omit.add(new Pet("NO ASIGNADO", 0000000000, fila[1], fila[2], fila[3], dangerous, fila[5]));
 				}
 			}
 			csvFile.close();
 			csvReader.close();
-			
-		} catch(IOException e) {
+
+		} catch (IOException e) {
 			return false;
-		}catch (CsvValidationException e) {
-				
+		} catch (CsvValidationException e) {
+
 		}
-		return true; 
-		}
-	
-	/* crea un id especifico para cada registro dependiendo de la informacion suministrada*/
+		return true;
+	}
+
+	/*
+	 * crea un id especifico para cada registro dependiendo de la informacion
+	 * suministrada
+	 */
 	public String assignID() {
-		String last="";
-		
-		for(int i = 0;i<pet.size();i++) {
-			boolean error = false ;
-			int j =2;
-			String digitos = pet.get(i).getMicrochip()+"";
-			if(pet.get(i).isPotentDangerous()==true) {
+		String last = "";
+
+		for (int i = 0; i < pet.size(); i++) {
+			boolean error = false;
+			int j = 2;
+			String digitos = pet.get(i).getMicrochip() + "";
+			if (pet.get(i).isPotentDangerous() == true) {
 				last = "T";
-			}else if(pet.get(i).isPotentDangerous()==false) {
+			} else if (pet.get(i).isPotentDangerous() == false) {
 				last = "F";
 			}
-			String id = digitos.substring(digitos.length()-j, digitos.length())+"-"+pet.get(i).getSpecies().substring(0, 1)+pet.get(i).getSex().substring(0, 1)+pet.get(i).getSize().substring(0, 1)+last;
+			String id = digitos.substring(digitos.length() - j, digitos.length()) + "-"
+					+ pet.get(i).getSpecies().substring(0, 1) + pet.get(i).getSex().substring(0, 1)
+					+ pet.get(i).getSize().substring(0, 1) + last;
 			try {
-				for(int k = 0;k<pet.size();k++) {
-					if(pet.get(k).getId().equals(id)) {
+				for (int k = 0; k < pet.size(); k++) {
+					if (pet.get(k).getId().equals(id)) {
 						error = true;
 						throw new IdentifierExistsException();
 					}
 				}
-			}catch (IdentifierExistsException e) {
+			} catch (IdentifierExistsException e) {
 				do {
 					int contador = 0;
 					j++;
-					id= digitos.substring(digitos.length()-j, digitos.length())+"-"+pet.get(i).getSpecies().substring(0, 1)+pet.get(i).getSex().substring(0, 1)+pet.get(i).getSize().substring(0, 1)+last;
-					for(int f = 0;f<i;f++) {
-						if(pet.get(f).getId().equals(id)) {
+					id = digitos.substring(digitos.length() - j, digitos.length()) + "-"
+							+ pet.get(i).getSpecies().substring(0, 1) + pet.get(i).getSex().substring(0, 1)
+							+ pet.get(i).getSize().substring(0, 1) + last;
+					for (int f = 0; f < i; f++) {
+						if (pet.get(f).getId().equals(id)) {
 							contador = 1;
-							f=i;
-						}else {
-							contador=0;
+							f = i;
+						} else {
+							contador = 0;
 						}
 					}
-					if(contador!=1) {
-					 error = false;	
-					 j=2;
+					if (contador != 1) {
+						error = false;
+						j = 2;
 					}
-				}while(error);
-				
+				} while (error);
+
 			}
-				pet.get(i).setId(id);
+			pet.get(i).setId(id);
 		}
-		
+
 		return "Asignacion de id exitosa";
 	}
-	
+
+	// método para búsqueda por medio del microchip
 	public String findByMicrochip(long number) {
-		int j=0;
+		int j = 0;
 		boolean flag = false;
-		for(int i=0;i<pet.size();i++) {	
-			if(pet.get(i).getMicrochip()==number) {
-				j=i;
-				i=pet.size();
-				flag=true;
+		for (int i = 0; i < pet.size(); i++) {
+			if (pet.get(i).getMicrochip() == number) {
+				j = i;
+				i = pet.size();
+				flag = true;
 			}
 		}
-		if(flag) {
+		if (flag) {
 			return pet.get(j).toString();
-		}else {
+		} else {
 			return "Microchip no encontrado";
 		}
-		
+
 	}
-	
+
+	// método para contar las especies
 	public String countBySpecies() {
-		long dog=0, cat=0, nn=0;
-		for(int i=0;i<pet.size();i++) {
-			if(pet.get(i).getSpecies().equals("CANINO")) {
+		long dog = 0, cat = 0, nn = 0;
+		for (int i = 0; i < pet.size(); i++) {
+			if (pet.get(i).getSpecies().equals("CANINO")) {
 				dog++;
-			} else if(pet.get(i).getSpecies().equals("FELINO")) {
+			} else if (pet.get(i).getSpecies().equals("FELINO")) {
 				cat++;
-			}else {
+			} else {
 				nn++;
 			}
 		}
-		return "Caninos : "+dog+".\nFelinos : "+cat+".\nNo Identificado : "+nn+".";
+		return "Caninos : " + dog + ".\nFelinos : " + cat + ".\nNo Identificado : " + nn + ".";
 	}
-	
+
+	// método para contar los animales por localidades
 	public String countByNeighborhood() {
-		long anarino=0, bunidos=0, bosa=0, cbolivar=0, chapinero=0, engativa=0, fontibon=0, kenedy=0, candelaria=0, martires=0, aledaños=0, aranda=0, uribe=0, cristobal=0, santafe=0, nn=0, suba=0, sumapaz=0, teusaquillo=0, tunjuelito=0, usaquen=0, usme=0;
-		for(int i=0;i<pet.size();i++) {
-			if(pet.get(i).getNeighborhood().equals("A. NARINO")) {
+		long anarino = 0, bunidos = 0, bosa = 0, cbolivar = 0, chapinero = 0, engativa = 0, fontibon = 0, kenedy = 0,
+				candelaria = 0, martires = 0, aledaños = 0, aranda = 0, uribe = 0, cristobal = 0, santafe = 0, nn = 0,
+				suba = 0, sumapaz = 0, teusaquillo = 0, tunjuelito = 0, usaquen = 0, usme = 0;
+		for (int i = 0; i < pet.size(); i++) {
+			if (pet.get(i).getNeighborhood().equals("A. NARINO")) {
 				anarino++;
-			}else if(pet.get(i).getNeighborhood().equals("B. UNIDOS")) {
+			} else if (pet.get(i).getNeighborhood().equals("B. UNIDOS")) {
 				bunidos++;
-			}else if(pet.get(i).getNeighborhood().equals("BOSA")) {
+			} else if (pet.get(i).getNeighborhood().equals("BOSA")) {
 				bosa++;
-			}else if(pet.get(i).getNeighborhood().equals("C. BOLIVAR")) {
+			} else if (pet.get(i).getNeighborhood().equals("C. BOLIVAR")) {
 				cbolivar++;
-			}else if(pet.get(i).getNeighborhood().equals("CHAPINERO")) {
+			} else if (pet.get(i).getNeighborhood().equals("CHAPINERO")) {
 				chapinero++;
-			}else if(pet.get(i).getNeighborhood().equals("ENGATIVA")) {
+			} else if (pet.get(i).getNeighborhood().equals("ENGATIVA")) {
 				engativa++;
-			}else if(pet.get(i).getNeighborhood().equals("FONTIBON")) {
+			} else if (pet.get(i).getNeighborhood().equals("FONTIBON")) {
 				fontibon++;
-			}else if(pet.get(i).getNeighborhood().equals("KENNEDY")) {
+			} else if (pet.get(i).getNeighborhood().equals("KENNEDY")) {
 				kenedy++;
-			}else if(pet.get(i).getNeighborhood().equals("LA CANDELARIA")) {
+			} else if (pet.get(i).getNeighborhood().equals("LA CANDELARIA")) {
 				candelaria++;
-			}else if(pet.get(i).getNeighborhood().equals("LOS MARTIRES")) {
+			} else if (pet.get(i).getNeighborhood().equals("LOS MARTIRES")) {
 				martires++;
-			}else if(pet.get(i).getNeighborhood().equals("MUNICIPIOS ALEDAÑOS BOGOTA D.C.")) {
+			} else if (pet.get(i).getNeighborhood().equals("MUNICIPIOS ALEDAÑOS BOGOTA D.C.")) {
 				aledaños++;
-			}else if(pet.get(i).getNeighborhood().equals("P. ARANDA")) {
+			} else if (pet.get(i).getNeighborhood().equals("P. ARANDA")) {
 				aranda++;
-			}else if(pet.get(i).getNeighborhood().equals("R. URIBE")) {
+			} else if (pet.get(i).getNeighborhood().equals("R. URIBE")) {
 				uribe++;
-			}else if(pet.get(i).getNeighborhood().equals("SAN CRISTOBAL")) {
+			} else if (pet.get(i).getNeighborhood().equals("SAN CRISTOBAL")) {
 				cristobal++;
-			}else if(pet.get(i).getNeighborhood().equals("SANTA FE")) {
+			} else if (pet.get(i).getNeighborhood().equals("SANTA FE")) {
 				santafe++;
-			}else if(pet.get(i).getNeighborhood().equals("SIN IDENTIFICAR")) {
+			} else if (pet.get(i).getNeighborhood().equals("SIN IDENTIFICAR")) {
 				nn++;
-			}else if(pet.get(i).getNeighborhood().equals("SUBA")) {
+			} else if (pet.get(i).getNeighborhood().equals("SUBA")) {
 				suba++;
-			}else if(pet.get(i).getNeighborhood().equals("SUMAPAZ")) {
+			} else if (pet.get(i).getNeighborhood().equals("SUMAPAZ")) {
 				sumapaz++;
-			}else if(pet.get(i).getNeighborhood().equals("TEUSAQUILLO")) {
+			} else if (pet.get(i).getNeighborhood().equals("TEUSAQUILLO")) {
 				teusaquillo++;
-			}else if(pet.get(i).getNeighborhood().equals("TUNJUELITO")) {
+			} else if (pet.get(i).getNeighborhood().equals("TUNJUELITO")) {
 				tunjuelito++;
-			}else if(pet.get(i).getNeighborhood().equals("USAQUEN")) {
+			} else if (pet.get(i).getNeighborhood().equals("USAQUEN")) {
 				usaquen++;
-			}else if(pet.get(i).getNeighborhood().equals("USME")) {
+			} else if (pet.get(i).getNeighborhood().equals("USME")) {
 				usme++;
 			}
 		}
-		return "A. NARINO : "+anarino
-				+"\nB. UNIDOS : "+bunidos
-				+"\nBOSA : "+bosa
-				+"\nC. BOLIVAR : "+cbolivar
-				+"\nCHAPINERO : "+chapinero
-				+"\nENGATIVA : "+engativa
-				+"\nFONTIBON : "+fontibon
-				+"\nKENNEDY : "+kenedy
-				+"\nLA CANDELARIA : "+candelaria
-				+"\nLOS MARTIRES : "+martires
-				+"\nP. ARANDA : "+aranda
-				+"\nR. URIBE : "+uribe
-				+"\nSAN CRISTOBAL : "+cristobal
-				+"\nSANTA FE : "+santafe
-				+"\nSUBA : "+suba
-				+"\nSUMAPAZ : "+sumapaz
-				+"\nTEUSAQUILLO : "+teusaquillo
-				+"\nTUNJUELITO : "+tunjuelito
-				+"\nUSAQUEN : "+usaquen
-				+"\nUSME : "+usme
-				+"\nMUNICIPIOS ALEDAÑOS BOGOTA D.C. : "+aledaños
-				+"\nSIN IDENTIFICAR : "+nn;
-	}	
+		return "A.Nariño: " + anarino + "\nB.Unidos: " + bunidos + "\nBosa: " + bosa + "\nC.Bolivar: " + cbolivar
+				+ "\nChapinero: " + chapinero + "\nEgativá: " + engativa + "\nFontibón: " + fontibon + "\nKennedy: "
+				+ kenedy + "\nLa Candelaria: " + candelaria + "\nLos Mártires: " + martires + "\nP.Aranda: " + aranda
+				+ "\nR.Uribe: " + uribe + "\nSan cristobal: " + cristobal + "\nSantafé: " + santafe + "\nSuba: " + suba
+				+ "\nSumapaz: " + sumapaz + "\nTeusaquillo: " + teusaquillo + "\nTunjuelito: " + tunjuelito
+				+ "\nUsaquén: " + usaquen + "\nUsme: " + usme + "\nMunicipios aledaños Bgotá D.C: " + aledaños
+				+ "\nSin identificar: " + nn;
+	}
+
+	// método para búsqueda personalizada
+	public String findByMultipleFields(String n, String p, String s, String se, String si, String da, String ne) {	
+		int numero = Integer.parseInt(n);
+		if(p.equalsIgnoreCase("top")) {
+		for(int i=0;i<pet.size();i++) {
+			if(pet.get(i).getSpecies().equalsIgnoreCase(s)) {			
+				if(pet.get(i).getSex().equalsIgnoreCase(se)) {				
+					if(pet.get(i).getSize().equalsIgnoreCase(si)) {	
+						if(da.equalsIgnoreCase("si")) {	
+							if(pet.get(i).isPotentDangerous()==true) {
+								if(pet.get(i).getNeighborhood().equalsIgnoreCase(ne)) {
+									busqueda.add(pet.get(i));
+							}
+						}
+					}else if(da.equalsIgnoreCase("no")) {	
+						if(pet.get(i).isPotentDangerous()==false) {
+							if(pet.get(i).getNeighborhood().equalsIgnoreCase(ne)) {
+								busqueda.add(pet.get(i));
+								}
+							}
+						}
+					}
+				}
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(se.equals(""))&(si.equals(""))&(da.equals(""))&(ne.equals(""))) {
+				busqueda.add(pet.get(i));
+			}if((pet.get(i).getSex().equalsIgnoreCase(se))&(s.equals(""))&(si.equals(""))&(da.equals(""))&(ne.equals(""))) {
+				busqueda.add(pet.get(i));
+			}if(pet.get(i).getSize().equalsIgnoreCase(si)&(s.equals(""))&(se.equals(""))&(da.equals(""))&(ne.equals(""))) {
+				busqueda.add(pet.get(i));
+			}if((da.equalsIgnoreCase("si"))&((se.equals(""))&(si.equals(""))&(da.equals(""))&(ne.equals(""))&s.equals(""))) {
+				if(pet.get(i).isPotentDangerous()==true) {
+					busqueda.add(pet.get(i));
+			}
+			}else if((da.equalsIgnoreCase("no"))&((se.equals(""))&(si.equals(""))&(da.equals(""))&(ne.equals(""))&s.equals(""))) {	
+				if(pet.get(i).isPotentDangerous()==false) {
+						busqueda.add(pet.get(i));
+				}
+			}if(pet.get(i).getNeighborhood().equalsIgnoreCase(ne)&(s.equals(""))&(se.equals(""))&(da.equals(""))&(si.equals(""))) {
+				busqueda.add(pet.get(i));
+			}
+			
+			///Búsqueda de especie y cualquier otro campo
+			
+			if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(pet.get(i).getSex().equalsIgnoreCase(se))&(si.equals(""))&(da.equals(""))&(ne.equals(""))){                              
+				busqueda.add(pet.get(i));
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(pet.get(i).getSize().equalsIgnoreCase(si))&(se.equals(""))&(da.equals(""))&(ne.equals(""))){                              
+				busqueda.add(pet.get(i));
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(da.equalsIgnoreCase("si"))&(se.equals(""))&(ne.equals(""))&(si.equals(""))){                              
+				if(pet.get(i).isPotentDangerous()==true) {
+					busqueda.add(pet.get(i));
+			}
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(da.equalsIgnoreCase("no"))&(se.equals(""))&(ne.equals(""))&(si.equals(""))){                              
+				if(pet.get(i).isPotentDangerous()==false) {
+					busqueda.add(pet.get(i));
+				}
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))&(se.equals(""))&(da.equals(""))&(si.equals(""))){                              
+				busqueda.add(pet.get(i));
+				
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&&(pet.get(i).getSex().equalsIgnoreCase(se))&&(pet.get(i).getSize().equalsIgnoreCase(si))&&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))&&(da.equalsIgnoreCase(""))) {			                                      																					
+							busqueda.add(pet.get(i));	
+			}	
+							
+			///Búsqueda de sexo y cualquier otro campo
 	
+			if((pet.get(i).getSex().equalsIgnoreCase(se))&(pet.get(i).getSize().equalsIgnoreCase(si))&(s.equals(""))&(da.equals(""))&(ne.equals(""))){                              
+				busqueda.add(pet.get(i));
+			}if((pet.get(i).getSex().equalsIgnoreCase(s))&(da.equalsIgnoreCase("si"))&(s.equals(""))&(ne.equals(""))&(si.equals(""))){                              
+				if(pet.get(i).isPotentDangerous()==true) {
+					busqueda.add(pet.get(i));
+			}
+			}if((pet.get(i).getSex().equalsIgnoreCase(se))&(da.equalsIgnoreCase("no"))&(s.equals(""))&(ne.equals(""))&(si.equals(""))){                              
+				if(pet.get(i).isPotentDangerous()==false) {
+					busqueda.add(pet.get(i));
+				}
+			}if((pet.get(i).getSex().equalsIgnoreCase(se))&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))&(s.equals(""))&(da.equals(""))&(si.equals(""))){                              
+				busqueda.add(pet.get(i));
+				
+			}if((pet.get(i).getSex().equalsIgnoreCase(se))&&(pet.get(i).getSex().equalsIgnoreCase(se))&&(pet.get(i).getSize().equalsIgnoreCase(si))&&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))&&(da.equalsIgnoreCase(""))) {			                                      																					
+							busqueda.add(pet.get(i));	
+			}	
+			
+			///Todos menos uno		
+			
+			if((pet.get(i).getSpecies().equalsIgnoreCase(s))&&(pet.get(i).getSex().equalsIgnoreCase(se))&&(pet.get(i).getSize().equalsIgnoreCase(si))&&(ne.equalsIgnoreCase(""))) {			                                      																					
+				if(da.equalsIgnoreCase("si")) {
+					if(pet.get(i).isPotentDangerous()==true) {
+							busqueda.add(pet.get(i));
+					}
+					}else if(da.equalsIgnoreCase("no")) {	
+								if(pet.get(i).isPotentDangerous()==false) {									
+										busqueda.add(pet.get(i));	
+								}
+						}
+				}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&&(pet.get(i).getSex().equalsIgnoreCase(se))&&(si.equalsIgnoreCase(""))&&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))) {			                                      																					
+					if(da.equalsIgnoreCase("si")) {
+						if(pet.get(i).isPotentDangerous()==true) {
+								busqueda.add(pet.get(i));
+						}
+						}else if(da.equalsIgnoreCase("no")) {	
+									if(pet.get(i).isPotentDangerous()==false) {									
+											busqueda.add(pet.get(i));	
+							}
+						}
+					}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&&(se.equalsIgnoreCase(""))&&(pet.get(i).getSize().equalsIgnoreCase(si))&&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))) {			                                      																											
+						if(da.equalsIgnoreCase("si")) {
+							if(pet.get(i).isPotentDangerous()==true) {
+									busqueda.add(pet.get(i));
+							}
+							}else if(da.equalsIgnoreCase("no")) {	
+										if(pet.get(i).isPotentDangerous()==false) {									
+												busqueda.add(pet.get(i));
+						}
+					}
+				}if((s.equalsIgnoreCase(""))&(pet.get(i).getSex().equalsIgnoreCase(se))&(pet.get(i).getSize().equalsIgnoreCase(si))&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))) {			                                      																					
+					if(da.equalsIgnoreCase("si")) {
+						if(pet.get(i).isPotentDangerous()==true) {
+								busqueda.add(pet.get(i));
+						}
+						}else if(da.equalsIgnoreCase("no")) {	
+									if(pet.get(i).isPotentDangerous()==false) {									
+											busqueda.add(pet.get(i));
+					}
+				}
+			}
+		}
+	}		
+		if(p.equalsIgnoreCase("last")) {
+		for(int i=pet.size()-1;i>=0;i--) {
+			if(pet.get(i).getSpecies().equalsIgnoreCase(s)) {			
+				if(pet.get(i).getSex().equalsIgnoreCase(se)) {				
+					if(pet.get(i).getSize().equalsIgnoreCase(si)) {	
+						if(da.equalsIgnoreCase("si")) {	
+							if(pet.get(i).isPotentDangerous()==true) {
+								if(pet.get(i).getNeighborhood().equalsIgnoreCase(ne)) {
+									busqueda.add(pet.get(i));
+							}
+						}
+					}else if(da.equalsIgnoreCase("no")) {	
+						if(pet.get(i).isPotentDangerous()==false) {
+							if(pet.get(i).getNeighborhood().equalsIgnoreCase(ne)) {
+								busqueda.add(pet.get(i));
+								}
+							}
+						}
+					}
+				}
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(se.equals(""))&(si.equals(""))&(da.equals(""))&(ne.equals(""))) {
+				busqueda.add(pet.get(i));
+			}if((pet.get(i).getSex().equalsIgnoreCase(se))&(s.equals(""))&(si.equals(""))&(da.equals(""))&(ne.equals(""))) {
+				busqueda.add(pet.get(i));
+			}if(pet.get(i).getSize().equalsIgnoreCase(si)&(s.equals(""))&(se.equals(""))&(da.equals(""))&(ne.equals(""))) {
+				busqueda.add(pet.get(i));
+			}if((da.equalsIgnoreCase("si"))&((se.equals(""))&(si.equals(""))&(da.equals(""))&(ne.equals(""))&s.equals(""))) {
+				if(pet.get(i).isPotentDangerous()==true) {
+					busqueda.add(pet.get(i));
+			}
+			}else if((da.equalsIgnoreCase("no"))&((se.equals(""))&(si.equals(""))&(da.equals(""))&(ne.equals(""))&s.equals(""))) {	
+				if(pet.get(i).isPotentDangerous()==false) {
+						busqueda.add(pet.get(i));
+				}
+			}if(pet.get(i).getNeighborhood().equalsIgnoreCase(ne)&(s.equals(""))&(se.equals(""))&(da.equals(""))&(si.equals(""))) {
+				busqueda.add(pet.get(i));
+			}
+			
+			///Búsqueda de especie y cualquier otro campo
+			
+			if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(pet.get(i).getSex().equalsIgnoreCase(se))&(si.equals(""))&(da.equals(""))&(ne.equals(""))){                              
+				busqueda.add(pet.get(i));
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(pet.get(i).getSize().equalsIgnoreCase(si))&(se.equals(""))&(da.equals(""))&(ne.equals(""))){                              
+				busqueda.add(pet.get(i));
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(da.equalsIgnoreCase("si"))&(se.equals(""))&(ne.equals(""))&(si.equals(""))){                              
+				if(pet.get(i).isPotentDangerous()==true) {
+					busqueda.add(pet.get(i));
+			}
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(da.equalsIgnoreCase("no"))&(se.equals(""))&(ne.equals(""))&(si.equals(""))){                              
+				if(pet.get(i).isPotentDangerous()==false) {
+					busqueda.add(pet.get(i));
+				}
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))&(se.equals(""))&(da.equals(""))&(si.equals(""))){                              
+				busqueda.add(pet.get(i));
+				
+			}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&&(pet.get(i).getSex().equalsIgnoreCase(se))&&(pet.get(i).getSize().equalsIgnoreCase(si))&&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))&&(da.equalsIgnoreCase(""))) {			                                      																					
+							busqueda.add(pet.get(i));	
+			}	
+							
+			///Búsqueda de sexo y cualquier otro campo
+	
+			if((pet.get(i).getSex().equalsIgnoreCase(se))&(pet.get(i).getSize().equalsIgnoreCase(si))&(s.equals(""))&(da.equals(""))&(ne.equals(""))){                              
+				busqueda.add(pet.get(i));
+			}if((pet.get(i).getSex().equalsIgnoreCase(s))&(da.equalsIgnoreCase("si"))&(s.equals(""))&(ne.equals(""))&(si.equals(""))){                              
+				if(pet.get(i).isPotentDangerous()==true) {
+					busqueda.add(pet.get(i));
+			}
+			}if((pet.get(i).getSex().equalsIgnoreCase(se))&(da.equalsIgnoreCase("no"))&(s.equals(""))&(ne.equals(""))&(si.equals(""))){                              
+				if(pet.get(i).isPotentDangerous()==false) {
+					busqueda.add(pet.get(i));
+				}
+			}if((pet.get(i).getSex().equalsIgnoreCase(se))&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))&(s.equals(""))&(da.equals(""))&(si.equals(""))){                              
+				busqueda.add(pet.get(i));
+				
+			}if((pet.get(i).getSex().equalsIgnoreCase(se))&&(pet.get(i).getSex().equalsIgnoreCase(se))&&(pet.get(i).getSize().equalsIgnoreCase(si))&&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))&&(da.equalsIgnoreCase(""))) {			                                      																					
+							busqueda.add(pet.get(i));	
+			}	
+			
+			///Todos menos uno		
+			
+			if((pet.get(i).getSpecies().equalsIgnoreCase(s))&&(pet.get(i).getSex().equalsIgnoreCase(se))&&(pet.get(i).getSize().equalsIgnoreCase(si))&&(ne.equalsIgnoreCase(""))) {			                                      																					
+				if(da.equalsIgnoreCase("si")) {
+					if(pet.get(i).isPotentDangerous()==true) {
+							busqueda.add(pet.get(i));
+					}
+					}else if(da.equalsIgnoreCase("no")) {	
+								if(pet.get(i).isPotentDangerous()==false) {									
+										busqueda.add(pet.get(i));	
+								}
+						}
+				}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&&(pet.get(i).getSex().equalsIgnoreCase(se))&&(si.equalsIgnoreCase(""))&&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))) {			                                      																					
+					if(da.equalsIgnoreCase("si")) {
+						if(pet.get(i).isPotentDangerous()==true) {
+								busqueda.add(pet.get(i));
+						}
+						}else if(da.equalsIgnoreCase("no")) {	
+									if(pet.get(i).isPotentDangerous()==false) {									
+											busqueda.add(pet.get(i));	
+							}
+						}
+					}if((pet.get(i).getSpecies().equalsIgnoreCase(s))&&(se.equalsIgnoreCase(""))&&(pet.get(i).getSize().equalsIgnoreCase(si))&&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))) {			                                      																											
+						if(da.equalsIgnoreCase("si")) {
+							if(pet.get(i).isPotentDangerous()==true) {
+									busqueda.add(pet.get(i));
+							}
+							}else if(da.equalsIgnoreCase("no")) {	
+										if(pet.get(i).isPotentDangerous()==false) {									
+												busqueda.add(pet.get(i));
+						}
+					}
+				}if((s.equalsIgnoreCase(""))&(pet.get(i).getSex().equalsIgnoreCase(se))&(pet.get(i).getSize().equalsIgnoreCase(si))&(pet.get(i).getNeighborhood().equalsIgnoreCase(ne))) {			                                      																					
+					if(da.equalsIgnoreCase("si")) {
+						if(pet.get(i).isPotentDangerous()==true) {
+								busqueda.add(pet.get(i));
+						}
+						}else if(da.equalsIgnoreCase("no")) {	
+									if(pet.get(i).isPotentDangerous()==false) {									
+											busqueda.add(pet.get(i));
+					}
+				}
+			}
+		}
+	}for(int i=0;i<numero;i++) {
+		resul.add(busqueda.get(i));
+	}	
+	return resul.toString();		
+}
+
+	///////////////////////////////////////////////////////////////
 	public ArrayList<Pet> getPet() {
 		return pet;
 	}
@@ -224,12 +488,20 @@ public class Manager {
 		this.pet = pet;
 	}
 
-	public ArrayList<Pet> getDato() {
-		return dato;
+	public ArrayList<Pet> getBusqueda() {
+		return busqueda;
 	}
 
-	public void setDato(ArrayList<Pet> dato) {
-		this.dato = dato;
+	public ArrayList<Pet> getResul() {
+		return resul;
+	}
+
+	public void setResul(ArrayList<Pet> resul) {
+		this.resul = resul;
+	}
+
+	public void setBusqueda(ArrayList<Pet> busqueda) {
+		this.busqueda = busqueda;
 	}
 
 	public ArrayList<Pet> getOmit() {
@@ -255,6 +527,5 @@ public class Manager {
 	public void setCsvFile(FileReader csvFile) {
 		this.csvFile = csvFile;
 	}
-	
-}
 
+}
