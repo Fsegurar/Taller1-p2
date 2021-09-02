@@ -82,7 +82,7 @@ public class Manager {
 	 */
 	public String assignID() {
 		String last = "";
-
+		String id = "";
 		for (int i = 0; i < pet.size(); i++) {
 			boolean error = false;
 			int j = 2;
@@ -92,9 +92,19 @@ public class Manager {
 			} else if (pet.get(i).isPotentDangerous() == false) {
 				last = "F";
 			}
-			String id = digitos.substring(digitos.length() - j, digitos.length()) + "-"
+			if(pet.get(i).getSize().equals("MINIATURA")) {
+				 id = digitos.substring(digitos.length() - j, digitos.length()) + "-"
+						+ pet.get(i).getSpecies().substring(0, 1) + pet.get(i).getSex().substring(0, 1)
+						+ "Mi"+ last;
+			}else if(pet.get(i).getSize().equals("MUY GRANDE")){
+				 id = digitos.substring(digitos.length() - j, digitos.length()) + "-"
+						+ pet.get(i).getSpecies().substring(0, 1) + pet.get(i).getSex().substring(0, 1)
+						+ "G"+ last;
+			}else {
+				 id = digitos.substring(digitos.length() - j, digitos.length()) + "-"
 					+ pet.get(i).getSpecies().substring(0, 1) + pet.get(i).getSex().substring(0, 1)
 					+ pet.get(i).getSize().substring(0, 1) + last;
+			}
 			try {
 				for (int k = 0; k < pet.size(); k++) {
 					if (pet.get(k).getId().equals(id)) {
