@@ -71,7 +71,7 @@ public class panelCustomSearch extends JPanel {
 		add(txtEspecie);
 		
 	
-		etiqueta_sex = new JLabel("sexo (macho/hembra): ");
+		etiqueta_sex = new JLabel("Sexo (macho/hembra): ");
 		etiqueta_sex.setBounds(30, 200, 160, 20);
 		add(etiqueta_sex);
 		
@@ -79,8 +79,8 @@ public class panelCustomSearch extends JPanel {
 		txtSex.setBounds(170, 200, 190, 20);
 		add(txtSex);
 		
-		etiqueta_size = new JLabel("Tamaño (Miniatura/Pequeño/Mediano/Grande): ");
-		etiqueta_size.setBounds(30, 250, 280, 20);
+		etiqueta_size = new JLabel("Tamaño (Miniatura/Pequeño/Mediano/Grande/Muy Grande/Gigamte): ");
+		etiqueta_size.setBounds(25, 230, 300, 30);
 		add(etiqueta_size);
 		
 		txtSize = new JTextField();

@@ -4,11 +4,13 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+import co.edu.unbosque.controller.Controller;
+
 public class VentanaCustomSearch extends JFrame{
 
 	private panelCustomSearch pCustom;
 	
-	public VentanaCustomSearch() {
+	public VentanaCustomSearch(Controller control) {
 		setTitle("Custom Search");
 		setSize(400,550);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,7 +22,7 @@ public class VentanaCustomSearch extends JFrame{
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(false);
-	
+		pCustom.getBoton_search().addActionListener(control);
 	}
 
 	private void inicializarComponentes() {

@@ -15,19 +15,14 @@ public class Controller implements ActionListener {
 	private Model model;
 	private View view;
 	Byte opcion = 0;
-	private VentanaCustomSearch custom;
 	
 	public Controller() {
 		model = new Model();
 		view = new View(this);    
-		custom = new VentanaCustomSearch();	
-		asignarOyentes();
 		funcionar();
 	}
 	
-	private void asignarOyentes() {
-		custom.getpCustom().getBoton_search().addActionListener(this);
-	}
+	
 
 	public void funcionar() {
 		view.escribirDato("Bienvenido al programa ciudadano de 4 patas");
@@ -80,7 +75,7 @@ public class Controller implements ActionListener {
 					view.escribirDato(model.getManager().countByNeighborhood());
 					break;
 				case 6:
-					custom.setVisible(true);	
+					view.getCustom().setVisible(true);	
 					opcion=7;
 					break;
 				case 7: 
@@ -133,7 +128,7 @@ public class Controller implements ActionListener {
 					view.escribirDato(model.getManager().countByNeighborhood());
 					break;
 				case 6:
-					custom.setVisible(true);					
+					view.getCustom().setVisible(true);					
 					opcion=7;
 					break;
 				case 7: 
@@ -180,7 +175,7 @@ public class Controller implements ActionListener {
 					view.escribirDato(model.getManager().countByNeighborhood());
 					break;
 				case 6:
-					custom.setVisible(true);				
+					view.getCustom().setVisible(true);				
 					opcion=7;
 					break;
 				case 7: 
@@ -192,19 +187,45 @@ public class Controller implements ActionListener {
 				}
 			}while (opcion!=7);
 			
-		}else if(e.getActionCommand().equals("BUSCAR")) {			
-			String n=custom.getpCustom().getTxtNumero().getText();		
-			String p= custom.getpCustom().getTxtPosicion().getText();		
-			String s= custom.getpCustom().getTxtEspecie().getText();
-			String se= custom.getpCustom().getTxtSex().getText();
-			String si= custom.getpCustom().getTxtSize().getText();
-			String da= custom.getpCustom().getTxtDangerous().getText();
-			String ne= custom.getpCustom().getTxtNeighborhood().getText();
+		}else if(e.getActionCommand().equals("BUSCAR")) {
+			try {
+				int n= Integer.parseInt(view.getCustom().getpCustom().getTxtNumero().getText());
+				String p= view.getCustom().getpCustom().getTxtPosicion().getText();		
+				String s= view.getCustom().getpCustom().getTxtEspecie().getText();
+				String se= view.getCustom().getpCustom().getTxtSex().getText();
+				String si= view.getCustom().getpCustom().getTxtSize().getText();
+				String da= view.getCustom().getpCustom().getTxtDangerous().getText();
+				String ne= view.getCustom().getpCustom().getTxtNeighborhood().getText();
+				if(p.equals("")&&(!p.equalsIgnoreCase("top")&&!p.equalsIgnoreCase("last"))){
+					view.mostrarInfo("Por favor ingrese Top o Last  en el campo de posición (TOP/LAST)", "error");
+					view.getCustom().getpCustom().getTxtPosicion().setText("");
+				}else if(!s.equals("")&&!s.equalsIgnoreCase("Canino")&&!s.equalsIgnoreCase("felino")&&!s.equalsIgnoreCase("no identificado")) {
+					view.mostrarInfo("Por favor ingrese Valores validos en el campo de Especie (Canino/Felino/No Identificado)", "error");
+					view.getCustom().getpCustom().getTxtEspecie().setText("");
+				}else if(!se.equals("")&&!se.equalsIgnoreCase("Hembra")&&!se.equalsIgnoreCase("macho")) {
+					view.mostrarInfo("Por favor ingrese Valores validos en el campo de Sexo (macho/hembra)", "error");
+					view.getCustom().getpCustom().getTxtSex().setText("");
+				}else if(!si.equals("")&&!si.equalsIgnoreCase("Gigante")&&!si.equalsIgnoreCase("Grande")&&!si.equalsIgnoreCase("Mediano")&&!si.equalsIgnoreCase("Miniatura")&&!si.equalsIgnoreCase("Muy Grande")&&!si.equalsIgnoreCase("Pequeño")) {
+					view.mostrarInfo("Por favor ingrese Valores validos en el campo deTamaño (Miniatura/Pequeño/Mediano/Grande/Muy Grande/Gigamte)", "error");
+					view.getCustom().getpCustom().getTxtSize().setText("");
+				}else if(!da.equals("")&&!da.equals("si")&&!da.equalsIgnoreCase("no")) {
+					view.mostrarInfo("Por favor ingrese Valores validos en el campo de ¿Es peligroso? (si/no)", "error");
+					view.getCustom().getpCustom().getTxtDangerous().setText("");
+				}else if(!ne.equals("")&&!ne.equalsIgnoreCase("A. NARINO")&&!ne.equalsIgnoreCase("B. UNIDOS")&&!ne.equalsIgnoreCase("BOSA")&&!ne.equalsIgnoreCase("C. BOLIVAR")&&!ne.equalsIgnoreCase("CHAPINERO")&&!ne.equalsIgnoreCase("ENGATIVA")&&!ne.equalsIgnoreCase("FONTIBON")&&!ne.equalsIgnoreCase("KENNEDY")&&!ne.equalsIgnoreCase("LA CANDELARIA")&&!ne.equalsIgnoreCase("LOS MARTIRES")&&!ne.equalsIgnoreCase("MUNICIPIOS ALEDAÑOS BOGOTA D.C.")&&!ne.equalsIgnoreCase("P. ARANDA")&&!ne.equalsIgnoreCase("R. URIBE")&&!ne.equalsIgnoreCase("SAN CRISTOBAL")&&!ne.equalsIgnoreCase("SANTA FE")&&!ne.equalsIgnoreCase("SIN IDENTIFICAR")&&!ne.equalsIgnoreCase("SUBA")&&!ne.equalsIgnoreCase("SUMAPAZ")&&!ne.equalsIgnoreCase("TEUSAQUILLO")&&!ne.equalsIgnoreCase("TUNJUELITO")&&!ne.equalsIgnoreCase("USAQUEN")&&!ne.equalsIgnoreCase("USME")) {
+					view.mostrarInfo("Por favor ingrese Valores validos en el campo de Barrio\n(A. NARINO/B. UNIDOS/BOSA/C. BOLIVAR/CHAPINERO/ENGATIVA/FONTIBON/KENNEDY/LA CANDELARIA/LOS MARTIRES/P. ARANDA/R. URIBE/SAN CRISTOBAL/SANTA FE/SUBA/SUMAPAZ/TEUSAQUILLO/TUNJUELITO/USAQUEN/USME/MUNICIPIOS ALEDAÑOS BOGOTA D.C./SIN IDENTIFICAR ", "error");
+					view.getCustom().getpCustom().getTxtNeighborhood().setText("");
+				}else {
+					view.getP().getArea().setText(model.getManager().findByMultipleFields(n,p,s,se,si,da,ne));
+					view.bigData();
+					view.getCustom().setVisible(false);	
+					model.getManager().getBusqueda().clear();
+					model.getManager().getResul().clear();
+				}
+			}catch(NumberFormatException k) {
+				view.mostrarInfo("Por favor ingrese un Numero en el campo de Número de mascotas que desea ver ", "error");
+				view.getCustom().getpCustom().getTxtNumero().setText("");
+			}
 			
-			view.getP().getArea().setText(model.getManager().findByMultipleFields(n,p,s,se,si,da,ne));
-			view.bigData();
-			custom.setVisible(false);	
-			model.getManager().getBusqueda().clear();		
 		}
 	}	
 }

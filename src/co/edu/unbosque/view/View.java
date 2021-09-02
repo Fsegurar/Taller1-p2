@@ -13,11 +13,6 @@ public class View extends JFrame{
 	private panel p;
 	private VentanaCustomSearch custom;
 	
-	public View() {
-		
-		custom = new VentanaCustomSearch();	
-	}
-	 
 	
 	public View(Controller control) {
 		setSize(700,500);
@@ -30,8 +25,10 @@ public class View extends JFrame{
 		p = new panel();
 		add(p,BorderLayout.CENTER);
 		
+		custom = new VentanaCustomSearch(control);
 		p.getBoton().addActionListener(control);
-	
+		
+		
 	}
 	
 	public void bigData() {
@@ -103,21 +100,26 @@ public class View extends JFrame{
 		}
 	}
 
+
 	public panel getP() {
 		return p;
 	}
+
 
 	public void setP(panel p) {
 		this.p = p;
 	}
 
+
 	public VentanaCustomSearch getCustom() {
 		return custom;
 	}
 
+
 	public void setCustom(VentanaCustomSearch custom) {
 		this.custom = custom;
 	}
+
 	
 	
 }
