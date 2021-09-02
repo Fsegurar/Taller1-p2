@@ -502,7 +502,6 @@ public class Manager {
 	return resul.toString();		
 }
 
-	///////////////////////////////////////////////////////////////"""
 	public ArrayList<Pet> getPet() {
 		return pet;
 	}

@@ -23,7 +23,7 @@ public class Controller implements ActionListener {
 	}
 	
 	
-
+ //metodo para iniciar el programa.
 	public void funcionar() {
 		view.escribirDato("Bienvenido al programa ciudadano de 4 patas");
 		view.escribirDato("Por favor cargue el archivo CSV");
@@ -89,7 +89,7 @@ public class Controller implements ActionListener {
 			
 		}
 	}
-
+//metodo de asicnacion de acciones.
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("OK")) {
